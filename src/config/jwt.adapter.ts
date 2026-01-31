@@ -1,4 +1,4 @@
-import jwt, { SignOptions } from "jsonwebtoken";
+import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 import { envs } from "./envs";
 
 const JWT_SEED = envs.JWT_SEED;
@@ -16,8 +16,13 @@ export class JwtAdapter {
     });
   }
 
-  static validateToken(token: string) {
-    throw new Error("Not implemented");
-    return;
+  static validateToken(token: string): Promise<null | string | JwtPayload | undefined> {
+    return new Promise((resolve) => {
+      jwt.verify(token, JWT_SEED, (err, decoded) => {
+        if (err) return resolve(null);
+
+        resolve(decoded);
+      });
+    });
   }
 }
